@@ -13,6 +13,8 @@ use core::fmt;
 pub enum ErrorKind {
     /// The caller sent something we cannot accept.
     InvalidInput,
+    /// The request body exceeds the configured limit.
+    PayloadTooLarge,
     /// The caller is not authenticated.
     Unauthorized,
     /// The caller is authenticated but not allowed.
@@ -33,8 +35,9 @@ pub enum ErrorKind {
 
 impl ErrorKind {
     /// Every kind, for tests and exhaustive tables.
-    pub const ALL: [Self; 9] = [
+    pub const ALL: [Self; 10] = [
         Self::InvalidInput,
+        Self::PayloadTooLarge,
         Self::Unauthorized,
         Self::Forbidden,
         Self::NotFound,
@@ -54,6 +57,7 @@ impl ErrorKind {
             Self::Forbidden => 403,
             Self::NotFound => 404,
             Self::Conflict => 409,
+            Self::PayloadTooLarge => 413,
             Self::RateLimited => 429,
             Self::Internal => 500,
             Self::Unavailable => 503,
@@ -70,6 +74,7 @@ impl ErrorKind {
             Self::Forbidden => "Forbidden",
             Self::NotFound => "Not found",
             Self::Conflict => "Conflict",
+            Self::PayloadTooLarge => "Payload too large",
             Self::RateLimited => "Rate limited",
             Self::Timeout => "Upstream timeout",
             Self::Unavailable => "Service unavailable",
@@ -86,6 +91,7 @@ impl ErrorKind {
             Self::Forbidden => "forbidden",
             Self::NotFound => "not_found",
             Self::Conflict => "conflict",
+            Self::PayloadTooLarge => "payload_too_large",
             Self::RateLimited => "rate_limited",
             Self::Timeout => "timeout",
             Self::Unavailable => "unavailable",
@@ -98,6 +104,7 @@ impl ErrorKind {
     pub const fn default_source(self) -> ErrorSource {
         match self {
             Self::InvalidInput
+            | Self::PayloadTooLarge
             | Self::Unauthorized
             | Self::Forbidden
             | Self::NotFound
@@ -118,9 +125,11 @@ impl ErrorKind {
     #[must_use]
     pub const fn severity(self) -> Severity {
         match self {
-            Self::InvalidInput | Self::Unauthorized | Self::Forbidden | Self::NotFound => {
-                Severity::Debug
-            }
+            Self::InvalidInput
+            | Self::PayloadTooLarge
+            | Self::Unauthorized
+            | Self::Forbidden
+            | Self::NotFound => Severity::Debug,
             Self::Conflict | Self::RateLimited => Severity::Info,
             Self::Timeout | Self::Unavailable => Severity::Warn,
             Self::Internal => Severity::Error,

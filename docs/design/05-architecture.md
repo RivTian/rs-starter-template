@@ -347,6 +347,7 @@ pub trait Classify { fn kind(&self) -> ErrorKind; fn source(&self) -> ErrorSourc
 | `ErrorKind`                  | HTTP      | `ErrorSource` | 可重试     | 日志级别 | 是否告警 |
 | ---------------------------- | --------- | ------------- | ---------- | -------- | -------- |
 | `InvalidInput`               | 400       | Client        | 否         | debug    | 否       |
+| `PayloadTooLarge`            | 413       | Client        | 否         | debug    | 否       |
 | `Unauthorized` / `Forbidden` | 401 / 403 | Client        | 否         | debug    | 否       |
 | `NotFound`                   | 404       | Client        | 否         | debug    | 否       |
 | `Conflict`                   | 409       | Client        | 否         | info     | 否       |

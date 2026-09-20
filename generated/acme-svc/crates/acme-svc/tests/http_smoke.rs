@@ -189,14 +189,38 @@ async fn request_id_is_echoed_or_generated() {
 
 #[tokio::test]
 async fn oversized_bodies_are_rejected() {
-    let app = app().await;
-    let huge = "x".repeat(2 * 1024 * 1024);
-    let res = app
-        .client
-        .post(app.url("/api/v1/todos"))
-        .json(&json!({ "title": huge }))
-        .send()
+    use tower::ServiceExt;
+
+    // Exercised in-process rather than over TCP: a server that answers 413 while the client is
+    // still uploading may legitimately reset the connection, which makes a socket-level test racy.
+    let cfg = Config::default();
+    let (_phase_tx, phase_rx) = watch::channel(Phase::Ready);
+    let router = bootstrap::wire(&cfg, phase_rx, None).router;
+    // Built with `json!` rather than a `format!` string: doubled braces in template source would
+    // be swallowed by cargo-generate's Liquid renderer.
+    let huge = serde_json::to_vec(&json!({ "title": "x".repeat(2 * 1024 * 1024) })).unwrap();
+
+    // Declared length over the limit: rejected by the body-limit layer before any handler runs.
+    let declared = axum::http::Request::post("/api/v1/todos")
+        .header("content-type", "application/json")
+        .header("content-length", huge.len())
+        .body(axum::body::Body::from(huge.clone()))
+        .unwrap();
+    assert_eq!(
+        router.clone().oneshot(declared).await.unwrap().status(),
+        413
+    );
+
+    // Streamed without a length: the extractor hits the limit and still answers 413 (not 400).
+    let streamed = axum::http::Request::post("/api/v1/todos")
+        .header("content-type", "application/json")
+        .body(axum::body::Body::from(huge))
+        .unwrap();
+    let response = router.oneshot(streamed).await.unwrap();
+    assert_eq!(response.status(), 413);
+    let bytes = axum::body::to_bytes(response.into_body(), 4096)
         .await
         .unwrap();
-    assert_eq!(res.status(), 413);
+    let body: Value = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!(body["kind"], "payload_too_large");
 }

@@ -5,6 +5,7 @@
 pub mod todo;
 
 use axum::extract::{FromRequest, FromRequestParts, Request};
+use axum::http::StatusCode;
 use axum::http::request::Parts;
 use serde::de::DeserializeOwned;
 
@@ -21,10 +22,15 @@ impl<S: Send + Sync, T: DeserializeOwned> FromRequest<S> for AppJson<T> {
     async fn from_request(request: Request, state: &S) -> Result<Self, Self::Rejection> {
         match axum::Json::<T>::from_request(request, state).await {
             Ok(axum::Json(value)) => Ok(Self(value)),
-            Err(rejection) => Err(ApiError::with_detail(
-                ErrorKind::InvalidInput,
-                rejection.body_text(),
-            )),
+            Err(rejection) => {
+                // Over-limit bodies keep their 413; everything else is the caller's input.
+                let kind = if rejection.status() == StatusCode::PAYLOAD_TOO_LARGE {
+                    ErrorKind::PayloadTooLarge
+                } else {
+                    ErrorKind::InvalidInput
+                };
+                Err(ApiError::with_detail(kind, rejection.body_text()))
+            }
         }
     }
 }

@@ -33,6 +33,7 @@ vergen-gitcl = { workspace = true }
 
 [dev-dependencies]
 acme-svc-test-utils = { workspace = true }
+tower = { workspace = true }
 metrics-exporter-prometheus = { workspace = true }
 reqwest = { workspace = true }
 serde_json = { workspace = true }

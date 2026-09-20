@@ -35,6 +35,7 @@ vergen-gitcl = { workspace = true }
 
 [dev-dependencies]
 {{project-name}}-test-utils = { workspace = true }
+tower = { workspace = true }
 metrics-exporter-prometheus = { workspace = true }
 reqwest = { workspace = true }
 serde_json = { workspace = true }
