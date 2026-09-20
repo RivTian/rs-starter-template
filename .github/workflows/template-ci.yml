@@ -75,7 +75,7 @@ jobs:
         include:
           - { name: acme-svc,  args: "-d license=MIT -d include_docker=true" }
           - { name: zz-widget, args: "-d license=Apache-2.0 -d include_docker=false" }
-          - { name: my-api,    args: "-d 'license=MIT OR Apache-2.0' -d include_docker=true" }
+          - { name: my-api,    args: "-d license=None -d include_docker=true" }
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable

@@ -14,7 +14,10 @@ if license == "MIT" {
 } else if license == "Apache-2.0" {
     file::delete("LICENSE-MIT");
     file::rename("LICENSE-APACHE", "LICENSE");
+} else {
+    // "None": no LICENSE file and no `license` field in Cargo.toml (private project).
+    file::delete("LICENSE-MIT");
+    file::delete("LICENSE-APACHE");
 }
-// "MIT OR Apache-2.0" keeps both files.
 
 file::delete("hooks");

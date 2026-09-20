@@ -4,7 +4,9 @@ description = "Shared, dependency-light helpers used by every other {{project-na
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
+{%- if license != "None" %}
 license.workspace = true
+{%- endif %}
 publish.workspace = true
 
 [dependencies]

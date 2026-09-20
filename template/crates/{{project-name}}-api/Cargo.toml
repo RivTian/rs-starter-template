@@ -4,7 +4,9 @@ description = "HTTP transport for {{project-name}}: router, handlers, middleware
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
+{%- if license != "None" %}
 license.workspace = true
+{%- endif %}
 publish.workspace = true
 
 [dependencies]

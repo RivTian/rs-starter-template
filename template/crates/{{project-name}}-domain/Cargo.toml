@@ -4,7 +4,9 @@ description = "Pure business model for {{project-name}}: entities, value objects
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
+{%- if license != "None" %}
 license.workspace = true
+{%- endif %}
 publish.workspace = true
 
 [dependencies]

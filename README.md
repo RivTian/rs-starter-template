@@ -62,12 +62,12 @@ cargo generate RivTian/rs-starter-template --name acme-svc --silent \
   -d project-description="Orders service" -d license=MIT -d include_docker=true -d repository=
 ```
 
-| 占位符                | 类型                                       | 默认                                            |
-| --------------------- | ------------------------------------------ | ----------------------------------------------- |
-| `project-description` | string                                     | `A Rust service built from rs-starter-template` |
-| `license`             | `MIT` / `Apache-2.0` / `MIT OR Apache-2.0` | `MIT`                                           |
-| `include_docker`      | bool                                       | `true`                                          |
-| `repository`          | string，可空                               | 空                                              |
+| 占位符                | 类型                                                                   | 默认                                            |
+| --------------------- | ---------------------------------------------------------------------- | ----------------------------------------------- |
+| `project-description` | string                                                                 | `A Rust service built from rs-starter-template` |
+| `license`             | `MIT` / `Apache-2.0` / `None`（不生成 LICENSE，也不写 `license` 字段） | `MIT`                                           |
+| `include_docker`      | bool                                                                   | `true`                                          |
+| `repository`          | string，可空                                                           | 空                                              |
 
 ## 仓库布局（模板维护者）
 

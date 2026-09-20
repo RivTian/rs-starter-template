@@ -39,7 +39,7 @@ check-rendered DIR:
 # Different names on purpose: they catch hard-coded `acme-svc` and lockfile ordering issues
 matrix:
     just _gen-one zz-widget 'license=Apache-2.0' 'include_docker=false'
-    just _gen-one my-api 'license=MIT OR Apache-2.0' 'include_docker=true'
+    just _gen-one my-api 'license=None' 'include_docker=true'
 
 _gen-one NAME LICENSE DOCKER:
     tmp=$(mktemp -d) && cargo generate --path template --destination "$tmp" --name {{NAME}} {{common}} -d '{{LICENSE}}' -d '{{DOCKER}}' \

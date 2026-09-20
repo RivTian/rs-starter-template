@@ -22,6 +22,10 @@ allow = [
 ]
 confidence-threshold = 0.8
 
+[licenses.private]
+# Workspace crates are `publish = false`; they need no license field to pass this check.
+ignore = true
+
 [bans]
 multiple-versions = "warn"
 wildcards = "deny"

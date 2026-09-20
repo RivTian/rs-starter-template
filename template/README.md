@@ -57,4 +57,8 @@ rule in `domain`, port trait in `domain`, adapter in `infra`, route in `api`, wi
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+{% if license == "None" -%}
+No license chosen at generation time. Add one with `license = "..."` in `Cargo.toml` and a `LICENSE` file.
+{%- else -%}
+{{license}} — see [LICENSE](LICENSE).
+{%- endif %}

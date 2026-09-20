@@ -8,7 +8,9 @@ default-members = ["crates/{{project-name}}"]
 version = "0.1.0"
 edition = "2024"
 rust-version = "1.96"
+{%- if license != "None" %}
 license = "{{license}}"
+{%- endif %}
 publish = false
 {%- if repository != "" %}
 repository = "{{repository}}"

@@ -67,7 +67,7 @@ exclude = [
 
 [placeholders]
 project-description = { type = "string", prompt = "One-line description of the service", default = "A Rust service built from rs-starter-template" }
-license             = { type = "string", prompt = "License", choices = ["MIT", "Apache-2.0", "MIT OR Apache-2.0"], default = "MIT" }
+license             = { type = "string", prompt = "License (None = no LICENSE file)", choices = ["MIT", "Apache-2.0", "None"], default = "MIT" }
 include_docker      = { type = "bool",   prompt = "Include Dockerfile, docker-compose and docker.yml workflow?", default = true }
 repository          = { type = "string", prompt = "Repository URL (leave empty to skip)", default = "", regex = "^(|https?://[^ ]+)$" }
 
