@@ -59,7 +59,8 @@ jobs:
           tool: cargo-generate
       - run: |
           rm -rf generated/acme-svc
-          cargo generate --path template --destination generated --name acme-svc $COMMON_ARGS \
+          read -ra common <<< "$COMMON_ARGS"
+          cargo generate --path template --destination generated --name acme-svc "${common[@]}" \
             -d project-description="A Rust service built from rs-starter-template" -d authors="Template Authors" \
             -d license=MIT -d include_docker=true
           python3 scripts/check_rendered.py generated/acme-svc
@@ -86,7 +87,8 @@ jobs:
           tool: cargo-generate,just,cargo-nextest,cargo-deny,typos-cli
       - name: generate into a temp dir (outside the repo, see rust-lang/cargo#9922)
         run: |
-          cargo generate --path template --destination "$RUNNER_TEMP" --name "${{ matrix.name }}" $COMMON_ARGS ${{ matrix.args }}
+          read -ra common <<< "$COMMON_ARGS"
+          cargo generate --path template --destination "$RUNNER_TEMP" --name "${{ matrix.name }}" "${common[@]}" ${{ matrix.args }}
           python3 scripts/check_rendered.py "$RUNNER_TEMP/${{ matrix.name }}"
       - uses: Swatinem/rust-cache@v2
         with:
