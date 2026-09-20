@@ -1,0 +1,16 @@
+services:
+  acme-svc:
+    build: .
+    image: acme-svc:dev
+    ports:
+      - "8080:8080"
+    environment:
+      ACME_SVC__HTTP__BIND: 0.0.0.0:8080
+      ACME_SVC__TELEMETRY__LOG_FORMAT: json
+      ACME_SVC_LOG: info
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

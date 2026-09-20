@@ -1,0 +1,72 @@
+# Developer tasks. `just` alone lists them. CI runs `just ci`.
+# Deliberately free of just brace interpolation: this file is also rendered by cargo-generate
+# (Liquid), so recipes use positional arguments ($@, $1) and exported variables instead.
+set dotenv-load := true
+set positional-arguments := true
+set shell := ["bash", "-euo", "pipefail", "-c"]
+
+export BIN := "acme-svc"
+export SMOKE_ADDR := "127.0.0.1:18080"
+
+default:
+    @just --list
+
+# ── everyday ────────────────────────────────────────────────────────────────
+# Run the service locally (reads .env if present); extra args go to the binary
+dev *args:
+    cargo run -- "$@"
+
+# Load + validate configuration and print the effective result
+check-config:
+    cargo run -q -- --check-config
+
+check:
+    cargo check --workspace --all-targets --all-features
+
+fmt:
+    cargo fmt --all
+
+lint:
+    cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+# Run tests (nextest) and doctests; extra args go to nextest
+test *args:
+    cargo nextest run --workspace --all-features "$@"
+    cargo test --workspace --doc
+
+doc:
+    RUSTDOCFLAGS="-D warnings" cargo doc --workspace --no-deps --all-features
+
+# ── quality gate (CI runs exactly this) ─────────────────────────────────────
+ci: fmt-check lint test doc deny typos
+
+fmt-check:
+    cargo fmt --all -- --check
+
+deny:
+    cargo deny check
+
+typos:
+    typos
+
+# Unused dependencies (needs cargo-machete)
+machete:
+    cargo machete
+
+# ── smoke: build, start, probe, SIGTERM, expect exit 0 ──────────────────────
+smoke:
+    cargo build -q
+    ./target/debug/$BIN --bind $SMOKE_ADDR & pid=$!; \
+      for _ in $(seq 1 50); do ./target/debug/$BIN probe http://$SMOKE_ADDR/readyz 2>/dev/null && break; sleep 0.2; done; \
+      ./target/debug/$BIN probe http://$SMOKE_ADDR/readyz; \
+      kill -TERM $pid; wait $pid
+
+# ── release / containers ────────────────────────────────────────────────────
+docker-build tag="acme-svc:dev":
+    docker build -t "$1" .
+
+docker-run tag="acme-svc:dev":
+    docker run --rm -p 8080:8080 "$1"
+
+changelog:
+    git cliff -o CHANGELOG.md
