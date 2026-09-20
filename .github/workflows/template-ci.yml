@@ -17,6 +17,8 @@ permissions:
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: -Dwarnings
+  # 快照与矩阵都用固定答案，保证可复现
+  COMMON_ARGS: --vcs none --silent -d project-description=ci -d repository= -d authors=CI -d year=2026
 
 jobs:
   docs:
@@ -46,4 +48,50 @@ jobs:
           workspaces: generated/acme-svc
       - run: just ci
 
-  # P4+：generate 矩阵（default / min / max）+ drift 检查
+  # 模板改了但快照没更新（或有人手改了快照）→ 失败
+  drift:
+    name: drift (template → generated)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-generate
+      - run: |
+          rm -rf generated/acme-svc
+          cargo generate --path template --destination generated --name acme-svc $COMMON_ARGS \
+            -d project-description="A Rust service built from rs-starter-template" -d authors="Template Authors" \
+            -d license=MIT -d include_docker=true
+          python3 scripts/check_rendered.py generated/acme-svc
+          git diff --exit-code --stat -- generated/
+
+  # 三组答案，三个不同的项目名：捕捉硬编码名字与 lockfile 排序问题
+  generate:
+    name: generate (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: acme-svc,  args: "-d license=MIT -d include_docker=true" }
+          - { name: zz-widget, args: "-d license=Apache-2.0 -d include_docker=false" }
+          - { name: my-api,    args: "-d license=MIT OR Apache-2.0 -d include_docker=true" }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-generate,just,cargo-nextest,cargo-deny,typos-cli
+      - name: generate into a temp dir (outside the repo, see rust-lang/cargo#9922)
+        run: |
+          cargo generate --path template --destination "$RUNNER_TEMP" --name "${{ matrix.name }}" $COMMON_ARGS ${{ matrix.args }}
+          python3 scripts/check_rendered.py "$RUNNER_TEMP/${{ matrix.name }}"
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ${{ runner.temp }}/${{ matrix.name }}
+          key: ${{ matrix.name }}
+      - run: cd "$RUNNER_TEMP/${{ matrix.name }}" && just ci
+      - name: smoke (start, probe, SIGTERM)
+        run: cd "$RUNNER_TEMP/${{ matrix.name }}" && just smoke
