@@ -77,3 +77,32 @@ cd /Users/riotian/Developer/personal/rs-starter-template && git init -b main && 
 | Service 依赖 DAG 与分阶段启动（Pingora `daggy` 做法）      | v0.3 | 现阶段注册顺序 + readiness 足够                |
 | `cargo xtask`                                              | 按需 | 当 `justfile` 出现复杂逻辑时再引入             |
 | Nix / devcontainer                                         | 按需 | 不影响架构                                     |
+
+## 7. 实施记录与偏差（2026-09-20，P0–P4 完成）
+
+实施按 P0 → P4 顺序完成，P1–P3 先在 `generated/acme-svc` 手写并全绿，再反向模板化进 `template/`（`just drift` 证明二者零差异）。与设计文档的偏差如下，均为实施时的具体判断：
+
+| 设计条目                                                         | 实施                                                                     | 原因                                                                                        |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| D13 `vergen-gix`                                                 | `vergen-gitcl`（同 API 家族，走 git CLI）                                | `gix` 依赖树很重，拖慢首次构建；`default_on_error()` 让无 git 目录也能编译                  |
+| `05` §6：`Classify` 定义在 `core`                                | 定义在 `util::error`，`core` 再导出                                      | `domain` 不能依赖 `core`（R3/R4），否则 `DomainError` 无法实现该 trait；见生成项目 ADR-0003 |
+| `05` §9：领域服务用事件总线                                      | `domain::ports::EventPublisher` 端口 + `infra::EventBusPublisher` 适配器 | 同上：`domain` 不认识 `core::Publisher`                                                     |
+| `06` §2.7：`TodoService<R, C>` 泛型                              | 持有 `Arc<dyn Port>`                                                     | `AppState` 与 axum `State` 提取器不适合泛型爆炸；测试替换 fake 同样方便                     |
+| 请求超时返回 408                                                 | 返回 504（`ErrorKind::Timeout`）                                         | 复用统一的错误分类，不为超时单开一个 kind                                                   |
+| `justfile` 用 `{{ARGS}}` 插值                                    | `set positional-arguments` + `$@`、`export` 变量                         | 让 justfile 能直接经 Liquid 渲染，不需要 `exclude` 或 raw 块                                |
+| `justfile` 在 `[template] exclude` 中                            | 不排除；排除的是 `cliff.toml`、`ci.yml`、`docker.yml`                    | 这三者自带 `{{ }}` 语法且不含占位符；`release.yml` 用 `{% raw -%}` 包裹并插入项目名         |
+| 矩阵三组答案都用 `acme-svc`                                      | `acme-svc` / `zz-widget` / `my-api`                                      | 不同名字才能抓到硬编码名与 lockfile 排序问题                                                |
+| `hooks/pre.rhai` 只做派生值                                      | 另加 `year`（可用 `-d year=` 固定）与许可证文件改名                      | 快照可复现；`[conditional]` 只能删不能改名                                                  |
+| Dockerfile `--probe` 标志                                        | `probe <url>` 子命令                                                     | clap 子命令比全局标志清晰                                                                   |
+| 生成项目 `rust-toolchain.toml` 组件含 `rust-src`/`rust-analyzer` | 只列 `rustfmt`、`clippy`                                                 | 本机 rustup 的 `rust-src` 组件损坏导致 `cargo` 直接失败；编辑器组件由用户按需安装           |
+| `infra::InfraError`                                              | 未实现                                                                   | 内存适配器直接映射到 `domain::RepositoryError`；真实驱动接入时再加                          |
+| `core::EventLogSubscriber`                                       | 放在 `infra::events::EventLogger`                                        | 它订阅的是 `DomainEvent`，`core` 不认识领域类型                                             |
+
+**验证记录**（本机，`RUSTUP_TOOLCHAIN=1.97.1`；本机 `stable` 工具链的 `rust-src` 组件损坏，无法升级到 1.98）：
+
+```text
+generated/acme-svc: just ci  ✓  (fmt / clippy -D warnings / nextest 43 passed / doctests / rustdoc -D warnings / deny / typos)
+generated/acme-svc: just smoke ✓ (start → /readyz 200 → SIGTERM → clean shutdown, exit 0)
+generated/acme-svc: cargo machete ✓
+template: just drift ✓ (regen 与快照零差异；无 Liquid 残留)
+```
