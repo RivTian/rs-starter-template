@@ -25,7 +25,7 @@ jobs:
     name: docs (tables aligned)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: python3 scripts/align_tables.py --check docs/design/*.md docs/design/references/agent-report-*.md
 
   # 快照必须能过它自己的质量门（与生成项目的 ci.yml 相同的命令）
@@ -36,7 +36,7 @@ jobs:
       run:
         working-directory: generated/acme-svc
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -53,7 +53,7 @@ jobs:
     name: drift (template → generated)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: taiki-e/install-action@v2
         with:
           tool: cargo-generate
@@ -77,7 +77,7 @@ jobs:
           - { name: zz-widget, args: "-d license=Apache-2.0 -d include_docker=false" }
           - { name: my-api,    args: "-d license=None -d include_docker=true" }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
