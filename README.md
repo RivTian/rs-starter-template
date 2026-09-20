@@ -3,7 +3,7 @@
 一条命令，得到一个优雅、开箱即用的多 crate Rust 服务骨架：
 
 ```bash
-cargo generate riotian/rs-starter-template --name acme-svc
+cargo generate RivTian/rs-starter-template --name acme-svc
 cd acme-svc && just dev
 ```
 
@@ -42,7 +42,7 @@ acme-svc/
 ## 五分钟体验
 
 ```bash
-cargo generate riotian/rs-starter-template --name acme-svc
+cargo generate RivTian/rs-starter-template --name acme-svc
 cd acme-svc
 cp .env.example .env
 just dev                        # 第一行日志：version / commit / build；最后一行：all services ready
@@ -58,7 +58,7 @@ just ci                         # fmt · clippy -D warnings · nextest · doctes
 ## 零交互生成
 
 ```bash
-cargo generate riotian/rs-starter-template --name acme-svc --silent \
+cargo generate RivTian/rs-starter-template --name acme-svc --silent \
   -d project-description="Orders service" -d license=MIT -d include_docker=true -d repository=
 ```
 

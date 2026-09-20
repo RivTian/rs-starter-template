@@ -404,4 +404,4 @@ rs-starter-template/                      ← GitHub 仓库根：没有 Cargo.to
 └── generated/                            ← 用默认答案生成的快照：独立 workspace，CI 在此编译
 ```
 
-这一布局同时满足：`cargo generate riotian/rs-starter-template` 零多余提示（§10.5）；模板作者 `just regen && git diff` 即可审查；CI 两条路径互相印证。具体占位符与 CI 设计见 `07-template-engineering.md`。
+这一布局同时满足：`cargo generate RivTian/rs-starter-template` 零多余提示（§10.5）；模板作者 `just regen && git diff` 即可审查；CI 两条路径互相印证。具体占位符与 CI 设计见 `07-template-engineering.md`。

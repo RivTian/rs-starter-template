@@ -1,6 +1,6 @@
 # 06 · 生成后的项目：目录逐文件说明与关键文件伪代码
 
-> 以 `cargo generate riotian/rs-starter-template --name acme-svc` 的默认答案（`license = MIT`、`include_docker = true`）为准。
+> 以 `cargo generate RivTian/rs-starter-template --name acme-svc` 的默认答案（`license = MIT`、`include_docker = true`）为准。
 > 每个文件后面的注释说明"为什么存在"；带 ★ 的文件在 §2 给出伪代码。
 
 ## 1. 目录树
@@ -567,7 +567,7 @@ CMD ["--config", "/etc/acme-svc/default.toml"]
 ## 3. 生成后 5 分钟体验
 
 ```bash
-cargo generate riotian/rs-starter-template --name acme-svc
+cargo generate RivTian/rs-starter-template --name acme-svc
 cd acme-svc
 cp .env.example .env
 just dev                    # 日志第一行：version / git / build；最后一行：all services ready

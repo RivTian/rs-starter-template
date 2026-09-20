@@ -7,7 +7,7 @@
 新用户执行一条命令：
 
 ```bash
-cargo generate riotian/rs-starter-template --name acme-svc
+cargo generate RivTian/rs-starter-template --name acme-svc
 ```
 
 得到一个**优雅、开箱即用、多 crate** 的 Rust 服务骨架：目录一眼能懂，`just dev` 立刻跑起来，`curl /healthz` 有回应，`Ctrl-C` 优雅退出，`just ci` 一次通过，且骨架本身已经把"往后怎么长大"的路铺好。

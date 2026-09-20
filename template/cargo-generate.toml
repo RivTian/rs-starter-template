@@ -1,4 +1,4 @@
-# rs-starter-template — https://github.com/riotian/rs-starter-template
+# rs-starter-template — https://github.com/RivTian/rs-starter-template
 [template]
 cargo_generate_version = ">=0.22.0"
 ignore = ["hooks"]

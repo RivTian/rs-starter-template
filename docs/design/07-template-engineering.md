@@ -1,6 +1,6 @@
 # 07 · 模板工程链设计：仓库布局、占位符、hooks、快照、Justfile、CI
 
-> 本文描述 **模板仓库本身**（`riotian/rs-starter-template`）如何组织与验证。生成物的架构见 `05`/`06`；cargo-generate 能力边界见 `03` §10。
+> 本文描述 **模板仓库本身**（`RivTian/rs-starter-template`）如何组织与验证。生成物的架构见 `05`/`06`；cargo-generate 能力边界见 `03` §10。
 
 ## 1. 模板仓库布局
 
@@ -41,7 +41,7 @@ rs-starter-template/                         GitHub 仓库根：无 Cargo.toml�
 ## 2. 定位与零多余提示
 
 ```text
-cargo generate riotian/rs-starter-template --name acme-svc
+cargo generate RivTian/rs-starter-template --name acme-svc
   │
   ├─ locate_template_configs(repo root)        只找到 template/cargo-generate.toml（generated/ 里没有：默认被排除）
   ├─ auto_locate_template_dir → 1 个 config 且未配置 sub_templates → 直接使用 template/，不提示
@@ -263,11 +263,11 @@ jobs:
 
 | 场景               | 命令                                                                                                                                                  |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 最新               | `cargo generate riotian/rs-starter-template --name acme-svc`                                                                                          |
-| 固定版本           | `cargo generate riotian/rs-starter-template --tag v1.2.0 --name acme-svc`                                                                             |
-| 零交互             | `cargo generate riotian/rs-starter-template --name acme-svc --silent -d license=MIT -d include_docker=true -d repository= -d project-description="…"` |
+| 最新               | `cargo generate RivTian/rs-starter-template --name acme-svc`                                                                                          |
+| 固定版本           | `cargo generate RivTian/rs-starter-template --tag v1.2.0 --name acme-svc`                                                                             |
+| 零交互             | `cargo generate RivTian/rs-starter-template --name acme-svc --silent -d license=MIT -d include_docker=true -d repository= -d project-description="…"` |
 | 从本地开发中的模板 | `cargo generate --path ./template --name acme-svc`                                                                                                    |
-| 生成到当前空目录   | `cargo generate riotian/rs-starter-template --init`                                                                                                   |
+| 生成到当前空目录   | `cargo generate RivTian/rs-starter-template --init`                                                                                                   |
 
 模板发版规则：`vX.Y.Z` tag；`CHANGELOG.md` 用 git-cliff；破坏性变更（crate 布局变化）升 major。
 
