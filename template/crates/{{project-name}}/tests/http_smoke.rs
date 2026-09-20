@@ -206,7 +206,10 @@ async fn oversized_bodies_are_rejected() {
         .header("content-length", huge.len())
         .body(axum::body::Body::from(huge.clone()))
         .unwrap();
-    assert_eq!(router.clone().oneshot(declared).await.unwrap().status(), 413);
+    assert_eq!(
+        router.clone().oneshot(declared).await.unwrap().status(),
+        413
+    );
 
     // Streamed without a length: the extractor hits the limit and still answers 413 (not 400).
     let streamed = axum::http::Request::post("/api/v1/todos")
@@ -215,7 +218,9 @@ async fn oversized_bodies_are_rejected() {
         .unwrap();
     let response = router.oneshot(streamed).await.unwrap();
     assert_eq!(response.status(), 413);
-    let bytes = axum::body::to_bytes(response.into_body(), 4096).await.unwrap();
+    let bytes = axum::body::to_bytes(response.into_body(), 4096)
+        .await
+        .unwrap();
     let body: Value = serde_json::from_slice(&bytes).unwrap();
     assert_eq!(body["kind"], "payload_too_large");
 }

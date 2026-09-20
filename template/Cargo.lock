@@ -20,6 +20,7 @@ dependencies = [
  "serde_json",
  "tokio",
  "toml",
+ "tower",
  "tracing",
  "vergen-gitcl",
 ]
