@@ -9,12 +9,14 @@
 
 use std::time::Duration;
 
+use tokio::net::TcpListener;
+
 use acme_svc::bootstrap;
+
 use acme_svc_api::prelude::HttpService;
 use acme_svc_config::Config;
 use acme_svc_core::server::{Phase, Server};
 use acme_svc_core::shutdown::{ChannelSignals, ShutdownSignal};
-use tokio::net::TcpListener;
 
 #[tokio::test]
 async fn start_serve_terminate() {

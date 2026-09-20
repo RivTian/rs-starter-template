@@ -3,8 +3,9 @@
 //! The rule is *configuration decides the runtime, never the reverse*: `main` stays synchronous
 //! until [`build`] returns, so the number of worker threads is a config key like any other.
 
-use {{crate_name}}_config::RuntimeConfig;
 use tokio::runtime::{Builder, Runtime};
+
+use {{crate_name}}_config::RuntimeConfig;
 
 /// Failure to construct the runtime.
 #[derive(Debug, thiserror::Error)]

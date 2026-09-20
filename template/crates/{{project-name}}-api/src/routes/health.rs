@@ -1,9 +1,10 @@
-use {{crate_name}}_core::health::HealthReport;
 use axum::Json;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
+
+use {{crate_name}}_core::health::HealthReport;
 
 use crate::state::AppState;
 

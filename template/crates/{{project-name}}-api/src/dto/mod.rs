@@ -4,10 +4,11 @@
 
 pub mod todo;
 
-use {{crate_name}}_core::error::ErrorKind;
 use axum::extract::{FromRequest, FromRequestParts, Request};
 use axum::http::request::Parts;
 use serde::de::DeserializeOwned;
+
+use {{crate_name}}_core::error::ErrorKind;
 
 use crate::error::ApiError;
 

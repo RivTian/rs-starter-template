@@ -3,8 +3,9 @@
 //! The rule is *configuration decides the runtime, never the reverse*: `main` stays synchronous
 //! until [`build`] returns, so the number of worker threads is a config key like any other.
 
-use acme_svc_config::RuntimeConfig;
 use tokio::runtime::{Builder, Runtime};
+
+use acme_svc_config::RuntimeConfig;
 
 /// Failure to construct the runtime.
 #[derive(Debug, thiserror::Error)]

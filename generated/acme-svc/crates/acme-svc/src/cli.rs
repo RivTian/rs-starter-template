@@ -4,17 +4,18 @@
 use std::net::SocketAddr;
 use std::path::PathBuf;
 
-use acme_svc_config::Sources;
 use clap::{Parser, Subcommand};
 
-use crate::ENV_PREFIX;
+use acme_svc_config::Sources;
+
+use crate::{CONFIG_ENV_VAR, ENV_PREFIX};
 
 /// Top-level arguments.
 #[derive(Parser, Debug)]
 #[command(name = "acme-svc", version = version(), about)]
 pub struct Cli {
     /// Read exactly this configuration file instead of config/default.toml + config/local.toml.
-    #[arg(short, long, env = "ACME_SVC_CONFIG", value_name = "FILE")]
+    #[arg(short, long, env = CONFIG_ENV_VAR, value_name = "FILE")]
     pub config: Option<PathBuf>,
 
     /// Override the HTTP bind address (highest priority).

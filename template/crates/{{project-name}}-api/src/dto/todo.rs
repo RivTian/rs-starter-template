@@ -1,6 +1,7 @@
-use {{crate_name}}_domain::todo::{Todo, TodoId};
 use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
+
+use {{crate_name}}_domain::todo::{Todo, TodoId};
 
 /// `POST /api/v1/todos` body.
 #[derive(Debug, Deserialize)]

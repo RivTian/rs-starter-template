@@ -5,6 +5,9 @@
 
 use std::sync::Arc;
 
+use axum::Router;
+use tracing::info;
+
 use acme_svc_api::prelude::{AppState, HttpService};
 use acme_svc_config::Config;
 use acme_svc_core::event::EventBus;
@@ -14,11 +17,7 @@ use acme_svc_core::service::Service;
 use acme_svc_core::telemetry::{self, PrometheusHandle, RuntimeMetricsService};
 use acme_svc_domain::event::DomainEvent;
 use acme_svc_domain::todo::TodoService;
-use acme_svc_infra::prelude::{
-    CleanupJob, EventBusPublisher, EventLogger, InMemoryTodoRepository, SystemClock,
-};
-use axum::Router;
-use tracing::info;
+use acme_svc_infra::prelude::*;
 
 use crate::{LOG_ENV_VAR, build_info};
 

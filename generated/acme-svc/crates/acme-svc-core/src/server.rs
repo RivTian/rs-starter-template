@@ -12,11 +12,12 @@
 
 use std::time::Duration;
 
-use acme_svc_config::ServerConfig;
 use serde::Serialize;
 use tokio::sync::{mpsc, watch};
 use tokio_util::task::TaskTracker;
 use tracing::{error, info, warn};
+
+use acme_svc_config::ServerConfig;
 
 use crate::readiness::{self, Readiness, ReadinessWatch};
 use crate::service::{Service, ServiceError};

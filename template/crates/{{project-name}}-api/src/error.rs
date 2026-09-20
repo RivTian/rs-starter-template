@@ -3,11 +3,12 @@
 //! Any error implementing [`Classify`] converts into it: the kind decides the status code and
 //! the log level; client errors carry their message as `detail`, internal errors never do.
 
-use {{crate_name}}_core::error::{Classify, ErrorKind, Severity};
-use {{crate_name}}_domain::error::DomainError;
 use axum::http::{StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
+
+use {{crate_name}}_core::error::{Classify, ErrorKind, Severity};
+use {{crate_name}}_domain::error::DomainError;
 
 /// Problem type URI prefix; the kind's slug is appended.
 pub const PROBLEM_TYPE_PREFIX: &str = "urn:{{project-name}}:problem:";
@@ -114,13 +115,15 @@ impl IntoResponse for ApiError {
 
 #[cfg(test)]
 mod tests {
+    use {{crate_name}}_domain::error::RepositoryError;
+
     use super::*;
 
     #[test]
     fn internal_errors_hide_detail_and_client_errors_show_it() {
-        let internal = ApiError::from_classified(&DomainError::from(
-            {{crate_name}}_domain::error::RepositoryError::Storage("disk on fire".into()),
-        ));
+        let internal = ApiError::from_classified(&DomainError::from(RepositoryError::Storage(
+            "disk on fire".into(),
+        )));
         assert_eq!(internal.status(), StatusCode::INTERNAL_SERVER_ERROR);
         assert!(internal.detail.is_none());
 

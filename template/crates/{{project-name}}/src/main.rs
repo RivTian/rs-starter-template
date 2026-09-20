@@ -4,10 +4,13 @@
 use std::process::ExitCode;
 use std::time::Duration;
 
+use clap::Parser;
+
 use {{crate_name}}::cli::{Cli, Command};
 use {{crate_name}}::{bootstrap, probe};
+
 use {{crate_name}}_config::Config;
-use clap::Parser;
+use {{crate_name}}_core::runtime;
 
 fn main() -> ExitCode {
     {{crate_name}}_core::telemetry::install_panic_hook();
@@ -32,11 +35,10 @@ fn main() -> ExitCode {
         };
     }
 
-    let runtime =
-        match {{crate_name}}_core::runtime::build(&cfg.runtime, &format!("{}-worker", cfg.app.name)) {
-            Ok(runtime) => runtime,
-            Err(error) => return fail("runtime", &error),
-        };
+    let runtime = match runtime::build(&cfg.runtime, &format!("{}-worker", cfg.app.name)) {
+        Ok(runtime) => runtime,
+        Err(error) => return fail("runtime", &error),
+    };
 
     let outcome = runtime.block_on(bootstrap::run(cfg));
     // Give blocking tasks a moment, then let go regardless.

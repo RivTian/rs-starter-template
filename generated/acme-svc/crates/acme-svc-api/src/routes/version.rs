@@ -1,6 +1,7 @@
-use acme_svc_core::build_info::BuildInfo;
 use axum::Json;
 use axum::extract::State;
+
+use acme_svc_core::build_info::BuildInfo;
 
 use crate::state::AppState;
 

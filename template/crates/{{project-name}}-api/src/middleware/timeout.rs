@@ -1,9 +1,10 @@
 use std::time::Duration;
 
-use {{crate_name}}_core::error::ErrorKind;
 use axum::extract::{Request, State};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Response};
+
+use {{crate_name}}_core::error::ErrorKind;
 
 use crate::error::ApiError;
 

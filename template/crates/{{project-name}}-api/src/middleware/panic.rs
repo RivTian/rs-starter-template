@@ -1,7 +1,8 @@
 use std::any::Any;
 
-use {{crate_name}}_core::error::ErrorKind;
 use axum::response::{IntoResponse, Response};
+
+use {{crate_name}}_core::error::ErrorKind;
 
 use crate::error::ApiError;
 

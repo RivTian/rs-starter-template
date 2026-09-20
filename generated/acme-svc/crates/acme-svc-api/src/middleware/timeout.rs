@@ -1,9 +1,10 @@
 use std::time::Duration;
 
-use acme_svc_core::error::ErrorKind;
 use axum::extract::{Request, State};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Response};
+
+use acme_svc_core::error::ErrorKind;
 
 use crate::error::ApiError;
 

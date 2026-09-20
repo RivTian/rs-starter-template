@@ -1,13 +1,14 @@
 use std::sync::Arc;
 
+use async_trait::async_trait;
+use tokio::time::MissedTickBehavior;
+use tracing::{debug, info, warn};
+
 use acme_svc_config::CleanupJobConfig;
 use acme_svc_core::readiness::Readiness;
 use acme_svc_core::service::{Service, ServiceError};
 use acme_svc_core::shutdown::ShutdownToken;
 use acme_svc_domain::todo::TodoService;
-use async_trait::async_trait;
-use tokio::time::MissedTickBehavior;
-use tracing::{debug, info, warn};
 
 /// Periodically purges completed todos older than the configured retention.
 pub struct CleanupJob {

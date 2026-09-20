@@ -163,6 +163,9 @@ mod tests {
 
     use super::*;
 
+    /// A prefix no real environment variable starts with.
+    const PREFIX: &str = "{{env_prefix}}_TEST_NONE";
+
     #[test]
     fn defaults_are_valid_and_round_trip() {
         let cfg = Config::default();
@@ -175,7 +178,7 @@ mod tests {
 
     #[test]
     fn overrides_beat_defaults() {
-        let sources = Sources::new("{{env_prefix}}_TEST_NONE")
+        let sources = Sources::new(PREFIX)
             .with_file(None)
             .with_override("http.bind", "127.0.0.1:1")
             .with_override("server.grace_period", "5s");
@@ -186,7 +189,7 @@ mod tests {
 
     #[test]
     fn validation_reports_every_problem() {
-        let sources = Sources::new("{{env_prefix}}_TEST_NONE")
+        let sources = Sources::new(PREFIX)
             .with_override("server.grace_period", "0s")
             .with_override("events.capacity", "0")
             .with_override("app.name", "");
@@ -199,7 +202,7 @@ mod tests {
 
     #[test]
     fn unknown_keys_are_rejected() {
-        let sources = Sources::new("{{env_prefix}}_TEST_NONE").with_override("http.bnid", "x");
+        let sources = Sources::new(PREFIX).with_override("http.bnid", "x");
         assert!(Config::load(&sources).is_err());
     }
 }

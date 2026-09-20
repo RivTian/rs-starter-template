@@ -4,10 +4,13 @@
 use std::process::ExitCode;
 use std::time::Duration;
 
+use clap::Parser;
+
 use acme_svc::cli::{Cli, Command};
 use acme_svc::{bootstrap, probe};
+
 use acme_svc_config::Config;
-use clap::Parser;
+use acme_svc_core::runtime;
 
 fn main() -> ExitCode {
     acme_svc_core::telemetry::install_panic_hook();
@@ -32,11 +35,10 @@ fn main() -> ExitCode {
         };
     }
 
-    let runtime =
-        match acme_svc_core::runtime::build(&cfg.runtime, &format!("{}-worker", cfg.app.name)) {
-            Ok(runtime) => runtime,
-            Err(error) => return fail("runtime", &error),
-        };
+    let runtime = match runtime::build(&cfg.runtime, &format!("{}-worker", cfg.app.name)) {
+        Ok(runtime) => runtime,
+        Err(error) => return fail("runtime", &error),
+    };
 
     let outcome = runtime.block_on(bootstrap::run(cfg));
     // Give blocking tasks a moment, then let go regardless.

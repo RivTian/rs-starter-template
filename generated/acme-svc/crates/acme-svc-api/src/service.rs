@@ -2,14 +2,15 @@
 
 use std::net::SocketAddr;
 
-use acme_svc_config::HttpConfig;
-use acme_svc_core::readiness::Readiness;
-use acme_svc_core::service::{Service, ServiceError};
-use acme_svc_core::shutdown::ShutdownToken;
 use async_trait::async_trait;
 use axum::Router;
 use tokio::net::TcpListener;
 use tracing::info;
+
+use acme_svc_config::HttpConfig;
+use acme_svc_core::readiness::Readiness;
+use acme_svc_core::service::{Service, ServiceError};
+use acme_svc_core::shutdown::ShutdownToken;
 
 /// Serves a [`Router`] on a TCP listener.
 pub struct HttpService {

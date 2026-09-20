@@ -9,12 +9,14 @@
 
 use std::time::Duration;
 
+use tokio::net::TcpListener;
+
 use {{crate_name}}::bootstrap;
+
 use {{crate_name}}_api::prelude::HttpService;
 use {{crate_name}}_config::Config;
 use {{crate_name}}_core::server::{Phase, Server};
 use {{crate_name}}_core::shutdown::{ChannelSignals, ShutdownSignal};
-use tokio::net::TcpListener;
 
 #[tokio::test]
 async fn start_serve_terminate() {

@@ -1,13 +1,14 @@
 //! Bridges the domain's `EventPublisher` port to the core event bus, and a subscriber that logs.
 
+use async_trait::async_trait;
+use tracing::info;
+
 use {{crate_name}}_core::event::{Publisher, Subscription};
 use {{crate_name}}_core::readiness::Readiness;
 use {{crate_name}}_core::service::{Service, ServiceError};
 use {{crate_name}}_core::shutdown::ShutdownToken;
 use {{crate_name}}_domain::event::DomainEvent;
 use {{crate_name}}_domain::ports::EventPublisher;
-use async_trait::async_trait;
-use tracing::info;
 
 /// Adapter: `domain::EventPublisher` on top of `core::Publisher<DomainEvent>`.
 pub struct EventBusPublisher {

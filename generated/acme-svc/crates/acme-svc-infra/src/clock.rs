@@ -1,7 +1,8 @@
 //! The real clock.
 
-use acme_svc_domain::ports::Clock;
 use time::OffsetDateTime;
+
+use acme_svc_domain::ports::Clock;
 
 /// Reads the system clock in UTC.
 #[derive(Debug, Clone, Copy, Default)]

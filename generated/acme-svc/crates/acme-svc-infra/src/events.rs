@@ -1,13 +1,14 @@
 //! Bridges the domain's `EventPublisher` port to the core event bus, and a subscriber that logs.
 
+use async_trait::async_trait;
+use tracing::info;
+
 use acme_svc_core::event::{Publisher, Subscription};
 use acme_svc_core::readiness::Readiness;
 use acme_svc_core::service::{Service, ServiceError};
 use acme_svc_core::shutdown::ShutdownToken;
 use acme_svc_domain::event::DomainEvent;
 use acme_svc_domain::ports::EventPublisher;
-use async_trait::async_trait;
-use tracing::info;
 
 /// Adapter: `domain::EventPublisher` on top of `core::Publisher<DomainEvent>`.
 pub struct EventBusPublisher {

@@ -9,13 +9,15 @@
 
 use std::sync::OnceLock;
 
+use serde_json::{Value, json};
+use tokio::sync::watch;
+
 use {{crate_name}}::bootstrap;
+
 use {{crate_name}}_config::Config;
 use {{crate_name}}_core::server::Phase;
 use {{crate_name}}_core::telemetry::PrometheusHandle;
 use {{crate_name}}_test_utils::TestApp;
-use serde_json::{Value, json};
-use tokio::sync::watch;
 
 /// One global recorder per test binary; `install_recorder` may only run once per process.
 fn metrics() -> PrometheusHandle {

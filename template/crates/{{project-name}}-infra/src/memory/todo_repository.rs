@@ -1,9 +1,10 @@
-use {{crate_name}}_core::health::{HealthCheck, HealthStatus};
-use {{crate_name}}_domain::error::RepositoryError;
-use {{crate_name}}_domain::todo::{Todo, TodoId, TodoRepository};
 use async_trait::async_trait;
 use dashmap::DashMap;
 use time::OffsetDateTime;
+
+use {{crate_name}}_core::health::{HealthCheck, HealthStatus};
+use {{crate_name}}_domain::error::RepositoryError;
+use {{crate_name}}_domain::todo::{Todo, TodoId, TodoRepository};
 
 /// A process-local todo store. Lost on restart, by design.
 #[derive(Debug, Default)]

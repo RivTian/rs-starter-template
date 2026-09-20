@@ -2,10 +2,11 @@
 
 use std::net::SocketAddr;
 
-use acme_svc_core::shutdown::ShutdownToken;
 use axum::Router;
 use tokio::net::TcpListener;
 use tokio::task::JoinHandle;
+
+use acme_svc_core::shutdown::ShutdownToken;
 
 /// A running router on `127.0.0.1:<random>`, torn down on drop.
 pub struct TestApp {

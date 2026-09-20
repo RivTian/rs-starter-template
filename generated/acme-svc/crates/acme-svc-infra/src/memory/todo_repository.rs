@@ -1,9 +1,10 @@
-use acme_svc_core::health::{HealthCheck, HealthStatus};
-use acme_svc_domain::error::RepositoryError;
-use acme_svc_domain::todo::{Todo, TodoId, TodoRepository};
 use async_trait::async_trait;
 use dashmap::DashMap;
 use time::OffsetDateTime;
+
+use acme_svc_core::health::{HealthCheck, HealthStatus};
+use acme_svc_domain::error::RepositoryError;
+use acme_svc_domain::todo::{Todo, TodoId, TodoRepository};
 
 /// A process-local todo store. Lost on restart, by design.
 #[derive(Debug, Default)]

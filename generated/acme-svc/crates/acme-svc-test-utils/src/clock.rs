@@ -3,8 +3,9 @@
 use std::sync::Mutex;
 use std::time::Duration;
 
-use acme_svc_domain::ports::Clock;
 use time::OffsetDateTime;
+
+use acme_svc_domain::ports::Clock;
 
 /// Starts at a fixed instant; advances only when told to.
 #[derive(Debug)]

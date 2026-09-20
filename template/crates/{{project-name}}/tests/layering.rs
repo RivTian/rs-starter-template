@@ -11,53 +11,31 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
-/// Who may depend on whom (non-dev dependencies only). Keep in sync with docs/architecture.md.
+/// Who may depend on whom (non-dev dependencies only), as crate-name suffixes relative to the
+/// binary crate's name. Keep in sync with docs/architecture.md.
 const ALLOWED: &[(&str, &[&str])] = &[
     (
-        "{{project-name}}",
-        &[
-            "{{project-name}}-api",
-            "{{project-name}}-infra",
-            "{{project-name}}-core",
-            "{{project-name}}-config",
-            "{{project-name}}-domain",
-            "{{project-name}}-util",
-        ],
+        "",
+        &["-api", "-infra", "-core", "-config", "-domain", "-util"],
     ),
+    ("-api", &["-domain", "-core", "-config", "-util"]),
+    ("-infra", &["-domain", "-core", "-config", "-util"]),
+    ("-core", &["-config", "-util"]),
+    ("-domain", &["-util"]),
+    ("-config", &["-util"]),
+    ("-util", &[]),
     (
-        "{{project-name}}-api",
-        &[
-            "{{project-name}}-domain",
-            "{{project-name}}-core",
-            "{{project-name}}-config",
-            "{{project-name}}-util",
-        ],
-    ),
-    (
-        "{{project-name}}-infra",
-        &[
-            "{{project-name}}-domain",
-            "{{project-name}}-core",
-            "{{project-name}}-config",
-            "{{project-name}}-util",
-        ],
-    ),
-    ("{{project-name}}-core", &["{{project-name}}-config", "{{project-name}}-util"]),
-    ("{{project-name}}-domain", &["{{project-name}}-util"]),
-    ("{{project-name}}-config", &["{{project-name}}-util"]),
-    ("{{project-name}}-util", &[]),
-    (
-        "{{project-name}}-test-utils",
-        &[
-            "{{project-name}}-api",
-            "{{project-name}}-infra",
-            "{{project-name}}-core",
-            "{{project-name}}-domain",
-            "{{project-name}}-config",
-            "{{project-name}}-util",
-        ],
+        "-test-utils",
+        &["-api", "-infra", "-core", "-domain", "-config", "-util"],
     ),
 ];
+
+/// The binary crate's name is the prefix of every workspace crate.
+const PREFIX: &str = env!("CARGO_PKG_NAME");
+
+fn full(suffix: &str) -> String {
+    format!("{PREFIX}{suffix}")
+}
 
 fn workspace_root() -> &'static Path {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -99,16 +77,16 @@ fn every_internal_dependency_is_allowed() {
         "crate set changed; update ALLOWED and docs/architecture.md"
     );
     for (name, deps) in &graph {
-        let allowed = ALLOWED
+        let allowed: Vec<String> = ALLOWED
             .iter()
-            .find(|(n, _)| n == name)
+            .find(|(suffix, _)| full(suffix) == *name)
             .unwrap_or_else(|| panic!("{name} missing in ALLOWED"))
-            .1;
+            .1
+            .iter()
+            .map(|suffix| full(suffix))
+            .collect();
         for dep in deps {
-            assert!(
-                allowed.contains(&dep.as_str()),
-                "layering violation: {name} -> {dep}"
-            );
+            assert!(allowed.contains(dep), "layering violation: {name} -> {dep}");
         }
     }
 }

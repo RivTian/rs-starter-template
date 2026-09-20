@@ -5,6 +5,8 @@ use axum::http::{HeaderName, HeaderValue};
 use axum::middleware::Next;
 use axum::response::Response;
 
+use acme_svc_util::id;
+
 use crate::context::RequestContext;
 
 /// The correlation header, honoured inbound and always set outbound.
@@ -19,7 +21,7 @@ pub async fn request_id(mut request: Request, next: Next) -> Response {
         .get(&HEADER)
         .and_then(|value| value.to_str().ok())
         .filter(|value| !value.is_empty() && value.len() <= MAX_LEN && value.is_ascii())
-        .map_or_else(|| acme_svc_util::id::new_v7().to_string(), str::to_owned);
+        .map_or_else(|| id::new_v7().to_string(), str::to_owned);
 
     request.extensions_mut().insert(RequestContext {
         request_id: request_id.clone(),

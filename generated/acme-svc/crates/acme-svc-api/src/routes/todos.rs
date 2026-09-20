@@ -1,9 +1,10 @@
-use acme_svc_domain::todo::{Title, TodoId};
 use axum::Json;
 use axum::Router;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::routing::{get, post};
+
+use acme_svc_domain::todo::{Title, TodoId};
 
 use crate::dto::todo::{CreateTodoRequest, TodoResponse};
 use crate::dto::{AppJson, AppPath};

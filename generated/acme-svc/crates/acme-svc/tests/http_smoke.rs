@@ -9,13 +9,15 @@
 
 use std::sync::OnceLock;
 
+use serde_json::{Value, json};
+use tokio::sync::watch;
+
 use acme_svc::bootstrap;
+
 use acme_svc_config::Config;
 use acme_svc_core::server::Phase;
 use acme_svc_core::telemetry::PrometheusHandle;
 use acme_svc_test_utils::TestApp;
-use serde_json::{Value, json};
-use tokio::sync::watch;
 
 /// One global recorder per test binary; `install_recorder` may only run once per process.
 fn metrics() -> PrometheusHandle {

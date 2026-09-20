@@ -1,6 +1,5 @@
 //! The route table and the middleware stack.
 
-use {{crate_name}}_config::HttpConfig;
 use axum::Router;
 use axum::middleware::{from_fn, from_fn_with_state};
 use axum::routing::get;
@@ -8,6 +7,8 @@ use tower::ServiceBuilder;
 use tower_http::catch_panic::CatchPanicLayer;
 use tower_http::limit::RequestBodyLimitLayer;
 use tower_http::trace::TraceLayer;
+
+use {{crate_name}}_config::HttpConfig;
 
 use crate::state::AppState;
 use crate::{middleware, routes};

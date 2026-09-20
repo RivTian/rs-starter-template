@@ -21,3 +21,5 @@ pub mod probe;
 pub const ENV_PREFIX: &str = "ACME_SVC";
 /// Log filter variable; wins over `RUST_LOG` and the configured filter.
 pub const LOG_ENV_VAR: &str = "ACME_SVC_LOG";
+/// Environment variable naming an explicit configuration file (same as `--config`).
+pub const CONFIG_ENV_VAR: &str = "ACME_SVC_CONFIG";

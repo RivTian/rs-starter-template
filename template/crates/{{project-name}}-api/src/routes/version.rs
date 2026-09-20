@@ -1,6 +1,7 @@
-use {{crate_name}}_core::build_info::BuildInfo;
 use axum::Json;
 use axum::extract::State;
+
+use {{crate_name}}_core::build_info::BuildInfo;
 
 use crate::state::AppState;
 

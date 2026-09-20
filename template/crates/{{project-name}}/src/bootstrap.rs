@@ -5,6 +5,9 @@
 
 use std::sync::Arc;
 
+use axum::Router;
+use tracing::info;
+
 use {{crate_name}}_api::prelude::{AppState, HttpService};
 use {{crate_name}}_config::Config;
 use {{crate_name}}_core::event::EventBus;
@@ -14,11 +17,7 @@ use {{crate_name}}_core::service::Service;
 use {{crate_name}}_core::telemetry::{self, PrometheusHandle, RuntimeMetricsService};
 use {{crate_name}}_domain::event::DomainEvent;
 use {{crate_name}}_domain::todo::TodoService;
-use {{crate_name}}_infra::prelude::{
-    CleanupJob, EventBusPublisher, EventLogger, InMemoryTodoRepository, SystemClock,
-};
-use axum::Router;
-use tracing::info;
+use {{crate_name}}_infra::prelude::*;
 
 use crate::{LOG_ENV_VAR, build_info};
 

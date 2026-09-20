@@ -3,8 +3,9 @@
 use std::sync::Mutex;
 use std::time::Duration;
 
-use {{crate_name}}_domain::ports::Clock;
 use time::OffsetDateTime;
+
+use {{crate_name}}_domain::ports::Clock;
 
 /// Starts at a fixed instant; advances only when told to.
 #[derive(Debug)]

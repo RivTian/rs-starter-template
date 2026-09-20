@@ -1,9 +1,10 @@
-use acme_svc_core::health::HealthReport;
 use axum::Json;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
+
+use acme_svc_core::health::HealthReport;
 
 use crate::state::AppState;
 

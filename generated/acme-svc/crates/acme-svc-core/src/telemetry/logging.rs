@@ -1,9 +1,10 @@
 use std::io::IsTerminal;
 
-use acme_svc_config::{LogFormat, TelemetryConfig};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{EnvFilter, Layer, fmt};
+
+use acme_svc_config::{LogFormat, TelemetryConfig};
 
 use super::TelemetryError;
 
