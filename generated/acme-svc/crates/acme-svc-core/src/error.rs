@@ -1,6 +1,7 @@
 //! Error classification, re-exported from the shared kernel plus logging glue.
 
-pub use acme_svc_util::error::{Classify, ErrorKind, ErrorSource, Severity};
+pub use acme_svc_util::error::{Classify, ErrorKind};
+pub use acme_svc_util::error::{ErrorSource, Severity};
 
 /// Maps a [`Severity`] to the `tracing` level to log at.
 #[must_use]
