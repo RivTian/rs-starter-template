@@ -1,0 +1,10 @@
+use acme_svc_core::build_info::BuildInfo;
+use axum::Json;
+use axum::extract::State;
+
+use crate::state::AppState;
+
+/// `GET /version` — build provenance.
+pub async fn get(State(state): State<AppState>) -> Json<BuildInfo> {
+    Json(state.build)
+}

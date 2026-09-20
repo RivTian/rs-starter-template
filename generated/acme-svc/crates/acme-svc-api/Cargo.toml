@@ -1,0 +1,27 @@
+[package]
+name = "acme-svc-api"
+description = "HTTP transport for acme-svc: router, handlers, middleware, DTOs and error mapping"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+acme-svc-config = { workspace = true }
+acme-svc-core = { workspace = true }
+acme-svc-domain = { workspace = true }
+acme-svc-util = { workspace = true }
+async-trait = { workspace = true }
+axum = { workspace = true }
+metrics = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+tracing = { workspace = true }
+
+[lints]
+workspace = true

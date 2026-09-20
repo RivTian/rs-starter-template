@@ -1,0 +1,4 @@
+[toolchain]
+channel = "stable"
+# rustfmt and clippy ship with the default profile; add rust-src / rust-analyzer locally if your editor needs them.
+components = ["rustfmt", "clippy"]

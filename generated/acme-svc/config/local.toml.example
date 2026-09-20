@@ -1,0 +1,6 @@
+# cp config/local.toml.example config/local.toml — local overrides, git-ignored.
+[http]
+bind = "127.0.0.1:9090"
+
+[telemetry]
+log_filter = "debug"

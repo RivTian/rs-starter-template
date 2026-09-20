@@ -1,0 +1,22 @@
+[package]
+name = "acme-svc-infra"
+description = "Adapters for acme-svc ports: storage, clock, event bus bridge, background jobs"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+acme-svc-config = { workspace = true }
+acme-svc-core = { workspace = true }
+acme-svc-domain = { workspace = true }
+async-trait = { workspace = true }
+dashmap = { workspace = true }
+metrics = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+
+[lints]
+workspace = true

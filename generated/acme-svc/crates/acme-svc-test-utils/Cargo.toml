@@ -1,0 +1,19 @@
+[package]
+name = "acme-svc-test-utils"
+description = "Test helpers for acme-svc: in-process test server, fake clock, recording event publisher"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+acme-svc-core = { workspace = true }
+acme-svc-domain = { workspace = true }
+axum = { workspace = true }
+reqwest = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+
+[lints]
+workspace = true
