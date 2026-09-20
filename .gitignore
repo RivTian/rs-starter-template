@@ -1,0 +1,18 @@
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Rust 构建产物（任意层级：generated/ 快照与 template 校验产物）
+target/
+**/*.rs.bk
+
+# Temporary files
+tmp/
+.temp/
+
+# 本地环境
+.env
+config/local.toml
