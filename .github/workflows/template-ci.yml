@@ -14,6 +14,10 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -Dwarnings
+
 jobs:
   docs:
     name: docs (tables aligned)
@@ -22,5 +26,24 @@ jobs:
       - uses: actions/checkout@v4
       - run: python3 scripts/align_tables.py --check docs/design/*.md docs/design/references/agent-report-*.md
 
-  # P1+：generated/ 快照必须能过它自己的 `just ci`（在 P1 完成后启用）
+  # 快照必须能过它自己的质量门（与生成项目的 ci.yml 相同的命令）
+  snapshot:
+    name: snapshot (generated/acme-svc just ci)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: generated/acme-svc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just,cargo-nextest,cargo-deny,typos-cli
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: generated/acme-svc
+      - run: just ci
+
   # P4+：generate 矩阵（default / min / max）+ drift 检查
