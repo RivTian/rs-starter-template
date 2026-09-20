@@ -3,7 +3,7 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 
 snapshot := "generated/acme-svc"
 # 固定的默认答案：快照必须在任何机器上可复现
-common := '--name acme-svc --vcs none --silent -d project-description="Example service generated from rs-starter-template" -d repository="" -d authors="Template Authors"'
+common := '--vcs none --silent -d project-description="A Rust service built from rs-starter-template" -d repository="" -d authors="Template Authors" -d year=2026'
 
 default:
     @just --list
@@ -20,7 +20,7 @@ docs-align:
 # 用默认答案重新生成快照（P4 起可用）
 regen:
     rm -rf {{snapshot}}
-    cargo generate --path template --destination generated {{common}} -d license=MIT -d include_docker=true
+    cargo generate --path template --destination generated --name acme-svc {{common}} -d license=MIT -d include_docker=true
     just check-rendered {{snapshot}}
 
 # 快照必须能过它自己的 ci
@@ -31,19 +31,19 @@ verify:
 drift: regen
     git diff --exit-code --stat -- generated/
 
-# 生成结果里不得残留未渲染的 Liquid 标记
+# 生成结果里不得残留未渲染的 Liquid 标记（允许列表：.template-raw-allowlist）
 check-rendered DIR:
-    ! grep -rn --exclude-dir=target --exclude-dir=.git '{{{{' "{{DIR}}"
-    ! grep -rn --exclude-dir=target --exclude-dir=.git '{%' "{{DIR}}"
+    python3 scripts/check_rendered.py "{{DIR}}"
 
 # 三组答案矩阵：生成到临时目录并各跑一遍 ci（本地版 template-ci）
+# Different names on purpose: they catch hard-coded `acme-svc` and lockfile ordering issues
 matrix:
-    just _gen-one 'license=Apache-2.0' 'include_docker=false'
-    just _gen-one 'license=MIT OR Apache-2.0' 'include_docker=true'
+    just _gen-one zz-widget 'license=Apache-2.0' 'include_docker=false'
+    just _gen-one my-api 'license=MIT OR Apache-2.0' 'include_docker=true'
 
-_gen-one LICENSE DOCKER:
-    tmp=$(mktemp -d) && cargo generate --path template --destination "$tmp" {{common}} -d '{{LICENSE}}' -d '{{DOCKER}}' \
-      && just check-rendered "$tmp/acme-svc" && (cd "$tmp/acme-svc" && just ci) && rm -rf "$tmp"
+_gen-one NAME LICENSE DOCKER:
+    tmp=$(mktemp -d) && cargo generate --path template --destination "$tmp" --name {{NAME}} {{common}} -d '{{LICENSE}}' -d '{{DOCKER}}' \
+      && just check-rendered "$tmp/{{NAME}}" && (cd "$tmp/{{NAME}}" && just ci) && rm -rf "$tmp"
 
 # 冒烟：构建快照 → 启动 → /healthz → SIGTERM → 退出码 0
 smoke:

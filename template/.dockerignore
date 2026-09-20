@@ -1,0 +1,7 @@
+target/
+.git/
+.env
+config/local.toml
+docs/
+*.md
+!README.md

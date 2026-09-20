@@ -1,0 +1,27 @@
+[package]
+name = "{{project-name}}-api"
+description = "HTTP transport for {{project-name}}: router, handlers, middleware, DTOs and error mapping"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+{{project-name}}-config = { workspace = true }
+{{project-name}}-core = { workspace = true }
+{{project-name}}-domain = { workspace = true }
+{{project-name}}-util = { workspace = true }
+async-trait = { workspace = true }
+axum = { workspace = true }
+metrics = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+tracing = { workspace = true }
+
+[lints]
+workspace = true

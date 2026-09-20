@@ -1,0 +1,34 @@
+# {{project-name}} configuration — the single source of truth for every key and its default.
+# Precedence (low → high): code defaults → this file → config/local.toml → env → CLI.
+# Env override for any key: {{env_prefix}}__<SECTION>__<KEY>, e.g. {{env_prefix}}__HTTP__BIND=0.0.0.0:8080
+
+[app]
+name = "{{project-name}}"                 # appears in logs and metrics
+environment = "development"       # development | staging | production
+
+[runtime]
+worker_threads = 0                # 0 = number of CPU cores
+max_blocking_threads = 512
+
+[server]
+grace_period = "30s"              # after SIGTERM: how long in-flight work may take before we give up
+readiness_timeout = "10s"         # how long to wait for every service to report ready (not fatal)
+
+[http]
+bind = "127.0.0.1:8080"
+request_timeout = "30s"
+body_limit = "1 MiB"
+
+[telemetry]
+log_format = "pretty"             # pretty | json
+log_filter = "info,{{crate_name}}=debug"
+metrics = true                    # exposes GET /metrics (Prometheus text format)
+runtime_metrics_interval = "15s"  # tokio runtime gauges sampling period
+
+[events]
+capacity = 1024                   # in-process event bus buffer per subscriber
+
+[jobs.cleanup]
+enabled = true
+interval = "60s"
+retention = "24h"                 # completed todos older than this are purged

@@ -1,0 +1,16 @@
+services:
+  {{project-name}}:
+    build: .
+    image: {{project-name}}:dev
+    ports:
+      - "8080:8080"
+    environment:
+      {{env_prefix}}__HTTP__BIND: 0.0.0.0:8080
+      {{env_prefix}}__TELEMETRY__LOG_FORMAT: json
+      {{env_prefix}}_LOG: info
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

@@ -1,0 +1,29 @@
+[package]
+name = "{{project-name}}-core"
+description = "Runtime core for {{project-name}}: server lifecycle, services, shutdown, readiness, telemetry, events"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+{{project-name}}-config = { workspace = true }
+{{project-name}}-util = { workspace = true }
+async-trait = { workspace = true }
+metrics = { workspace = true }
+metrics-exporter-prometheus = { workspace = true }
+serde = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[features]
+default = []
+# Reserved seam: OpenTelemetry export. Wire `tracing-opentelemetry` here without touching callers.
+otel = []
+
+[lints]
+workspace = true

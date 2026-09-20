@@ -1,0 +1,18 @@
+[package]
+name = "{{project-name}}-util"
+description = "Shared, dependency-light helpers used by every other {{project-name}} crate"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+uuid = { workspace = true }
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+serde_json = { workspace = true }
