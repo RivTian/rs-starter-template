@@ -1,0 +1,26 @@
+name: template-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 3 * * 1"   # 每周一：捕捉上游依赖漂移
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    name: docs (tables aligned)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/align_tables.py --check docs/design/*.md docs/design/references/agent-report-*.md
+
+  # P1+：generated/ 快照必须能过它自己的 `just ci`（在 P1 完成后启用）
+  # P4+：generate 矩阵（default / min / max）+ drift 检查

@@ -1,0 +1,7 @@
+# 模板仓库只盯 GitHub Actions；生成项目里的 Cargo 依赖由生成项目自己的 dependabot 负责。
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
