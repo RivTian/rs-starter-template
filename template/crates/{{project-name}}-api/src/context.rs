@@ -18,11 +18,17 @@ pub struct RequestContext {
 impl<S: Send + Sync> FromRequestParts<S> for RequestContext {
     type Rejection = StatusCode;
 
-    async fn from_request_parts(parts: &mut Parts, _: &S) -> Result<Self, Self::Rejection> {
-        parts
-            .extensions
-            .get::<Self>()
-            .cloned()
-            .ok_or(StatusCode::INTERNAL_SERVER_ERROR)
+    // Nothing to await: the middleware already put the context into the extensions.
+    fn from_request_parts(
+        parts: &mut Parts,
+        _: &S,
+    ) -> impl Future<Output = Result<Self, Self::Rejection>> + Send {
+        std::future::ready(
+            parts
+                .extensions
+                .get::<Self>()
+                .cloned()
+                .ok_or(StatusCode::INTERNAL_SERVER_ERROR),
+        )
     }
 }
