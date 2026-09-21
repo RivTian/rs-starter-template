@@ -10,6 +10,7 @@ use acme_svc::cli::{Cli, Command};
 use acme_svc::{bootstrap, probe};
 
 use acme_svc_config::Config;
+use acme_svc_core::error::chain;
 use acme_svc_core::runtime;
 
 fn main() -> ExitCode {
@@ -60,11 +61,6 @@ fn print_config(text: &str) {
 
 #[expect(clippy::print_stderr, reason = "telemetry may not be installed yet")]
 fn fail(stage: &str, error: &dyn std::error::Error) -> ExitCode {
-    eprintln!("{stage} error: {error}");
-    let mut cause = error.source();
-    while let Some(inner) = cause {
-        eprintln!("  caused by: {inner}");
-        cause = inner.source();
-    }
+    eprintln!("{stage} error: {}", chain(error));
     ExitCode::FAILURE
 }

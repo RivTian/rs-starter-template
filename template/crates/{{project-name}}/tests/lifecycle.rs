@@ -15,7 +15,8 @@ use {{crate_name}}::bootstrap;
 
 use {{crate_name}}_api::prelude::HttpService;
 use {{crate_name}}_config::Config;
-use {{crate_name}}_core::server::{Phase, Server};
+use {{crate_name}}_core::error::chain;
+use {{crate_name}}_core::server::{Phase, Server, ServerError};
 use {{crate_name}}_core::shutdown::{ChannelSignals, ShutdownSignal};
 
 #[tokio::test]
@@ -70,4 +71,35 @@ async fn start_serve_terminate() {
             .await
             .is_err()
     );
+}
+
+#[tokio::test]
+async fn bind_conflict_is_fatal_and_reports_the_os_error() {
+    let mut cfg = Config::default();
+    cfg.server.grace_period = Duration::from_secs(2);
+    cfg.server.readiness_timeout = Duration::from_secs(2);
+
+    // Occupy a port, then ask the service to bind the same one.
+    let taken = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    cfg.http.bind = taken.local_addr().unwrap();
+
+    let mut server = Server::new(cfg.server.clone());
+    let wiring = bootstrap::wire(&cfg, server.phase_watch(), None);
+    server.add_service(HttpService::new(&cfg.http, wiring.router));
+
+    let (_trigger, signals) = ChannelSignals::new();
+    let err = server.run_with(signals).await.expect_err("bind must fail");
+    assert!(
+        matches!(err, ServerError::ServiceFailed { name: "http", .. }),
+        "{err}"
+    );
+
+    // The top-level message alone hides the OS reason; the rendered chain carries it.
+    let rendered = chain(&err).to_string();
+    assert!(
+        rendered.starts_with("service `http` failed: failed to bind "),
+        "{rendered}"
+    );
+    assert!(rendered.contains("os error"), "{rendered}");
+    assert_ne!(rendered, err.to_string());
 }

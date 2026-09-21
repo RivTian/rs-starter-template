@@ -209,9 +209,89 @@ pub trait Classify {
     }
 }
 
+/// Renders `error` and its `source()` chain as `a: b: c`.
+///
+/// A hop whose text equals the previous one (a transparent wrapper) is printed once. Use it
+/// wherever an error is logged — `error = %chain(&e)` — so the root cause lands in the same log
+/// line as the summary; a bare `%e` shows only the outermost message.
+pub fn chain(error: &dyn std::error::Error) -> impl std::fmt::Display + '_ {
+    Chain(error)
+}
+
+struct Chain<'a>(&'a dyn std::error::Error);
+
+impl fmt::Display for Chain<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut previous = self.0.to_string();
+        f.write_str(&previous)?;
+        let mut cursor = self.0.source();
+        while let Some(cause) = cursor {
+            let text = cause.to_string();
+            if text != previous {
+                write!(f, ": {text}")?;
+                previous = text;
+            }
+            cursor = cause.source();
+        }
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A hand-rolled error so the test needs no extra dependency.
+    #[derive(Debug)]
+    struct Layer {
+        text: &'static str,
+        source: Option<Box<Self>>,
+    }
+
+    impl fmt::Display for Layer {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            f.write_str(self.text)
+        }
+    }
+
+    impl std::error::Error for Layer {
+        fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+            self.source
+                .as_deref()
+                .map(|s| -> &(dyn std::error::Error + 'static) { s })
+        }
+    }
+
+    fn layer(text: &'static str, source: Option<Layer>) -> Layer {
+        Layer {
+            text,
+            source: source.map(Box::new),
+        }
+    }
+
+    #[test]
+    fn chain_joins_every_hop_with_a_colon() {
+        let err = layer(
+            "service failed",
+            Some(layer("failed to bind", Some(layer("address in use", None)))),
+        );
+        assert_eq!(
+            chain(&err).to_string(),
+            "service failed: failed to bind: address in use"
+        );
+    }
+
+    #[test]
+    fn chain_folds_a_hop_that_repeats_the_previous_text() {
+        let err = layer("same", Some(layer("same", Some(layer("root", None)))));
+        assert_eq!(chain(&err).to_string(), "same: root");
+    }
+
+    #[test]
+    fn chain_of_a_single_error_is_its_display() {
+        let err = layer("alone", None);
+        assert_eq!(chain(&err).to_string(), "alone");
+    }
 
     #[test]
     fn every_kind_maps_to_a_distinct_status_family() {

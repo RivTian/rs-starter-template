@@ -5,6 +5,7 @@ use tokio::time::MissedTickBehavior;
 use tracing::{debug, info, warn};
 
 use {{crate_name}}_config::CleanupJobConfig;
+use {{crate_name}}_core::error::chain;
 use {{crate_name}}_core::readiness::Readiness;
 use {{crate_name}}_core::service::{Service, ServiceError};
 use {{crate_name}}_core::shutdown::ShutdownToken;
@@ -27,7 +28,9 @@ impl CleanupJob {
         match self.todos.purge_completed(self.cfg.retention).await {
             Ok(0) => debug!("cleanup: nothing to purge"),
             Ok(count) => info!(count, "cleanup: purged completed todos"),
-            Err(error) => warn!(error = %error, "cleanup: purge failed; will retry next tick"),
+            Err(error) => {
+                warn!(error = %chain(&error), "cleanup: purge failed; will retry next tick");
+            }
         }
     }
 }
