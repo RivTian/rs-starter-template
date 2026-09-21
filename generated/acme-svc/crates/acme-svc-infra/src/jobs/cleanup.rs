@@ -5,6 +5,7 @@ use tokio::time::MissedTickBehavior;
 use tracing::{debug, info, warn};
 
 use acme_svc_config::CleanupJobConfig;
+use acme_svc_core::error::chain;
 use acme_svc_core::readiness::Readiness;
 use acme_svc_core::service::{Service, ServiceError};
 use acme_svc_core::shutdown::ShutdownToken;
@@ -27,7 +28,9 @@ impl CleanupJob {
         match self.todos.purge_completed(self.cfg.retention).await {
             Ok(0) => debug!("cleanup: nothing to purge"),
             Ok(count) => info!(count, "cleanup: purged completed todos"),
-            Err(error) => warn!(error = %error, "cleanup: purge failed; will retry next tick"),
+            Err(error) => {
+                warn!(error = %chain(&error), "cleanup: purge failed; will retry next tick");
+            }
         }
     }
 }

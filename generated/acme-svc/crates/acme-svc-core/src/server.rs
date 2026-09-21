@@ -19,6 +19,7 @@ use tracing::{error, info, warn};
 
 use acme_svc_config::ServerConfig;
 
+use crate::error::chain;
 use crate::readiness::{self, Readiness, ReadinessWatch};
 use crate::service::{Service, ServiceError};
 use crate::shutdown::{OsSignals, ShutdownToken, SignalSource};
@@ -223,7 +224,7 @@ impl Server {
                 match service.run(child, notifier).await {
                     Ok(()) => info!(service = name, "stopped"),
                     Err(error) => {
-                        error!(service = name, error = %error, "service failed; shutting down");
+                        error!(service = name, error = %chain(&error), "service failed; shutting down");
                         let _ = failure_tx.send(ServiceFailure { name, error });
                         root.cancel();
                     }

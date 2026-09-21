@@ -60,7 +60,7 @@ impl Service for EventLogger {
             tokio::select! {
                 () = shutdown.cancelled() => return Ok(()),
                 next = self.subscription.next() => match next {
-                    Some(event) => info!(event = event.name(), ?event, "domain event"),
+                    Some(event) => info!(event = event.name(), payload = ?event, "domain event"),
                     None => return Ok(()),
                 },
             }

@@ -7,7 +7,7 @@ use axum::http::{StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use serde::Serialize;
 
-use acme_svc_core::error::{Classify, ErrorKind, Severity};
+use acme_svc_core::error::{Classify, ErrorKind, Severity, chain};
 use acme_svc_domain::error::DomainError;
 
 /// Problem type URI prefix; the kind's slug is appended.
@@ -42,15 +42,16 @@ impl ApiError {
         }
     }
 
-    /// Converts any classified error, logging it at the severity the kind demands.
-    /// Internal errors are logged in full but reach the client without detail.
-    pub fn from_classified<E: Classify + std::fmt::Display>(error: &E) -> Self {
+    /// Converts any classified error, logging it (with its cause chain) at the severity the
+    /// kind demands. Internal errors reach the client without detail.
+    pub fn from_classified<E: Classify + std::error::Error>(error: &E) -> Self {
         let kind = error.kind();
+        let rendered = chain(error);
         match error.severity() {
-            Severity::Error => tracing::error!(%error, %kind, "request failed"),
-            Severity::Warn => tracing::warn!(%error, %kind, "request failed"),
-            Severity::Info => tracing::info!(%error, %kind, "request rejected"),
-            Severity::Debug => tracing::debug!(%error, %kind, "request rejected"),
+            Severity::Error => tracing::error!(error = %rendered, %kind, "request failed"),
+            Severity::Warn => tracing::warn!(error = %rendered, %kind, "request failed"),
+            Severity::Info => tracing::info!(error = %rendered, %kind, "request rejected"),
+            Severity::Debug => tracing::debug!(error = %rendered, %kind, "request rejected"),
         }
         let detail = kind.is_client_error().then(|| error.to_string());
         Self {

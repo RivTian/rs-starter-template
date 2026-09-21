@@ -3,6 +3,24 @@
 All notable changes to the template are documented here. Generated projects have their own
 changelog (git-cliff).
 
+## [Unreleased]
+
+### Fixed
+
+- Generated projects: the `domain event` log line emitted the `event` key twice (the `?event`
+  shorthand reuses the variable name), which strict JSON parsers reject. The payload is now
+  logged as `payload`.
+- Generated projects: errors are logged with their full `source()` chain via the new
+  `util::error::chain` (re-exported as `core::error::chain`), so a bind failure reads
+  `failed to bind 127.0.0.1:8080: Address already in use (os error 48)` in the log line instead
+  of only on stderr at exit. `ApiError::from_classified` now requires `std::error::Error`; the
+  client-visible `detail` is still the top-level message only.
+
+### Added
+
+- Generated projects: a `bind_conflict_is_fatal_and_reports_the_os_error` integration test and a
+  `## Logs` section in `CONTRIBUTING.md` (one field name per event; log errors with `chain`).
+
 ## [0.1.0] - 2026-09-20
 
 ### Added

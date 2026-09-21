@@ -54,6 +54,14 @@ upwards, the code belongs one layer higher.
 | anything that outlives a request | a `core::Service` registered in `bootstrap.rs` | bare `tokio::spawn` |
 | a poisoned lock | decide explicitly (`PoisonError::into_inner` with a comment) | silent unwrap chains |
 
+## Logs
+
+* One field name per event. The `?x` / `%x` shorthands reuse the variable name, so
+  `info!(event = event.name(), ?event, …)` emits the key `event` twice — invalid JSON for strict
+  parsers. Name the second field: `info!(event = event.name(), payload = ?event, …)`.
+* Log errors with their cause chain: `error = %chain(&e)` (`acme_svc_core::error::chain`). A bare
+  `%e` prints only the outermost message and silently drops everything below it.
+
 ## Errors
 
 Each layer has its own `thiserror` enum. Anything that crosses a layer implements
