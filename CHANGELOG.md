@@ -18,6 +18,8 @@ changelog (git-cliff).
 
 ### Added
 
+- Repository: issue forms (bug / feature) and a pull-request template that encode the
+  contribution flow (issue → branch → PR closing the issue → template-ci → merge).
 - Generated projects: a `bind_conflict_is_fatal_and_reports_the_os_error` integration test and a
   `## Logs` section in `CONTRIBUTING.md` (one field name per event; log errors with `chain`).
 

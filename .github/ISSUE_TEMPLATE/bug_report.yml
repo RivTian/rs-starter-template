@@ -1,0 +1,61 @@
+name: Bug 报告
+description: 模板或生成项目的缺陷。写清现象、复现命令，原因与方案不确定可留空。
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        结论请带前缀：**【源码事实】**（有 `file:line`）、**【分析推断】**、**【设计建议】**。
+        `file:line` 无前缀时指快照 `generated/acme-svc/`（模板源在 `template/crates/{{project-name}}-…`，同一位置）。
+  - type: dropdown
+    id: scope
+    attributes:
+      label: 影响范围
+      multiple: true
+      options:
+        - template/（模板源）
+        - generated/acme-svc（快照）
+        - 用模板生成出来的项目
+        - template-ci / justfile / scripts
+        - docs/
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 版本
+      description: 模板 commit 或 tag，以及 cargo-generate / rustc 版本
+      placeholder: "v0.1.0 · cargo-generate 0.24.0 · rustc 1.98.1"
+    validations:
+      required: true
+  - type: textarea
+    id: symptom
+    attributes:
+      label: 现象
+      description: 实际发生了什么。贴日志、输出或断言原文，不要转述。
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: 复现步骤
+      description: 从 `cargo generate` 开始的命令序列
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: cause
+    attributes:
+      label: 原因（如已知）
+      description: 指向 `file:line`；上游依据（Pumpkin / Pingora / 其它仓库）也写在这里
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 修复方案（如有）
+      description: 涉及模块、依赖变化、兼容性风险
+  - type: textarea
+    id: verify
+    attributes:
+      label: 验证方法
+      description: 修好后怎么证明：单测、集成测试或实测命令
