@@ -1,0 +1,20 @@
+[package]
+name = "starter-app"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "装配层: CLI、日志初始化、引导、信号与生命周期编排; 产出二进制 rs-starter-template"
+
+[[bin]]
+name = "rs-starter-template"
+path = "src/main.rs"
+
+[dependencies]
+starter-core = { workspace = true }
+
+anyhow = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+tracing = { workspace = true }
+# subscriber 初始化全 workspace 仅此一处
+tracing-subscriber = { workspace = true }

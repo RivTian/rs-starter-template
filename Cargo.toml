@@ -1,0 +1,49 @@
+[workspace]
+resolver = "2"
+members = ["app", "core"]
+
+[workspace.package]
+version = "0.3.0"
+edition = "2024"
+authors = ["tianjun.rio <tianjun.rio@gmail.com>"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
+
+[profile.release-size]
+inherits = "release"
+opt-level = "z"
+
+[workspace.dependencies]
+# ── workspace 内部 crate（禁止表外依赖边）──────
+starter-core = { path = "core" }
+
+# ── 第三方：版本与 feature 只在此声明一次，成员一律 `{ workspace = true }` ──────
+anyhow = "1"
+# TLS 统一走 rustls + ring：`rustls` feature 会展开成 `__rustls-aws-lc-rs`，
+# 把 aws-lc-sys 的 C/cmake 构建拖进依赖图，交叉编译到 arm/mac/linux 时是纯负担。
+# 改用 `rustls-no-provider` 后由 starter_core::tls 显式安装 ring 为进程级默认 provider。
+reqwest = { version = "0.13", default-features = false, features = [
+    "json",
+    "rustls-no-provider",
+] }
+rustls = { version = "0.23", default-features = false, features = [
+    "ring",
+    "std",
+    "tls12",
+    "logging",
+] }
+serde = { version = "1", features = ["derive", "rc"] }
+serde_json = "1"
+serde_path_to_error = "0.1"
+thiserror = "2"
+tokio = { version = "1", features = ["full"] }
+tokio-util = "0.7"
+toml = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+url = "2"
